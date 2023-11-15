@@ -8,6 +8,8 @@
 #ifndef compiler_h
 #define compiler_h
 
-#include <stdio.h>
+#include "afd.h"
+
+void make_transitions(AFD *a);
 
 #endif /* compiler_h */

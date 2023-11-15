@@ -72,10 +72,36 @@ unsigned int match(AFD *afd, const char *file_name) {
 
     if(file != NULL) {
         unsigned int state = 0;
+        unsigned int l_comment = 0, ml_comment = 0;
+        
         for(char ch = fgetc(file); ch != EOF; ch = fgetc(file)) {
-            for(Node *node = afd->transitions[state]; node != NULL; node = node->next) {
-                if(ch == '\n')
+            if(ch == '\n') {
+                if(l_comment)
+                    l_comment = 0;
+                continue;
+            }
+            if(l_comment || ml_comment) {
+                if(ml_comment && ch == '*' && getc(file) == '/')
+                    ml_comment = 0;
+                else
+                    fseek(file, sizeof(char), -1);
+                printf("IGN: %c\n", ch);
+                continue;
+            }
+            if(ch == '/') {
+                char ch2 = getc(file);
+                if(ch == ch2) {
+                    l_comment = 1;
                     continue;
+                }
+                else if(ch2 == '*') {
+                    ml_comment = 1;
+                    continue;
+                } else {
+                    fseek(file, sizeof(char), -1);
+                }
+            }
+            for(Node *node = afd->transitions[state]; node != NULL; node = node->next) {
                 if(node->symbol == ch) {
                     if(node->add != '\0') {
                         memory = add_memory(node->add, memory);
