@@ -6,18 +6,28 @@ include "arquivo.jpzm";
 
 // Importa tudo de uma biblioteca nativa e coloca em bib
 include Biblioteca as bib;
+ include  Biblioteca  as  bib ;
 
 // Importa tudo de um arquivo e coloca em arq
 include "arquivo.jpzm" as arq;
+ include  ".arquivo.jpzm"  as  arq ;
 
 // Importa funções e classes de uma biblioteca nativa
 include funcao_1, Classe1 from Biblioteca;
+ include  funcao_1,Classe1  from  Biblioteca ;
 
 // Importa funções e classes de um arquivo
 include funcao_1, Classe1 from "arquivo.jpzm";
+ include  funcao_1,Classe1  from  ".arquivo.jpzm" ;
 
 // Importa funções e classes de uma biblioteca nativa e coloca em bib
 include funcao_1, Classe1 from Biblioteca as bib;
+ include  funcao_1,Classe1  from  Biblioteca  as  bib ;
 
 // Importa funções e classes de um arquivo e coloca em arq
 include funcao_1, Classe1 from "arquivo.jpzm" as arq;
+ include  funcao_1,Classe1  from  ".arquivo.jpzm"  as  arq ;
+
+// Renomeia(apelida) o tipo str para String
+rename str to String;
+ rename  str  to  String ;

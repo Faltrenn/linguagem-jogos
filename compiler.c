@@ -10,7 +10,8 @@
 
 void make_transitions(AFD *a) {
     add_transition(a, 0, ' ', '\0', '\0', 0, 0);
-        
+    
+    // Includes
     add_transition(a, 0, 'i', '\0', '\0', 1, 0); // Palavra chave
     add_transition(a, 1, 'n', '\0', '\0', 2, 0);
     add_transition(a, 2, 'c', '\0', '\0', 3, 0);
@@ -55,6 +56,25 @@ void make_transitions(AFD *a) {
     add_transition(a, 24, ';', '\0', '\0', 0, 0);
     add_transition(a, 25, ';', '\0', '\0', 0, 0);
     
+    // Rename
+    add_transition(a, 0, 'r', '\0', '\0', 27, 0);
+    add_transition(a, 27, 'e', '\0', '\0', 28, 0);
+    add_transition(a, 28, 'n', '\0', '\0', 29, 0);
+    add_transition(a, 29, 'a', '\0', '\0', 30, 0);
+    add_transition(a, 30, 'm', '\0', '\0', 31, 0);
+    add_transition(a, 31, 'e', '\0', '\0', 32, 0);
+    add_transition(a, 32, ' ', '\0', '\0', 33, 1);
+    add_transition(a, 33, '_', '\0', '\0', 34, 1);
+    add_transition(a, 34, ' ', '\0', '\0', 35, 1);
+    add_transition(a, 35, 't', '\0', '\0', 36, 0);
+    add_transition(a, 36, 'o', '\0', '\0', 37, 0);
+    add_transition(a, 37, ' ', '\0', '\0', 38, 1);
+    add_transition(a, 38, '_', '\0', '\0', 39, 1);
+    add_transition(a, 39, ' ', '\0', '\0', 40, 1);
+    add_transition(a, 39, ';', '\0', '\0', 0, 0);
+    add_transition(a, 40, ';', '\0', '\0', 0, 0);
+    
+    
     for(int c = 'a'; c <= 'z'; c++) { // Letras
         add_transition(a, 8, c, '\0', '\0', 9, 1);
         add_transition(a, 8, c-32, '\0', '\0', 9, 1);
@@ -64,6 +84,10 @@ void make_transitions(AFD *a) {
         add_transition(a, 18, c-32, '\0', '\0', 19, 1);
         add_transition(a, 23, c, '\0', '\0', 24, 1);
         add_transition(a, 23, c-32, '\0', '\0', 24, 1);
+        add_transition(a, 33, c, '\0', '\0', 34, 1);
+        add_transition(a, 33, c-32, '\0', '\0', 34, 1);
+        add_transition(a, 38, c, '\0', '\0', 39, 1);
+        add_transition(a, 38, c-32, '\0', '\0', 39, 1);
     }
     
     for(int i = '0'; i <= '9'; i++) { // Números
@@ -71,6 +95,7 @@ void make_transitions(AFD *a) {
         add_transition(a, 12, i, '\0', '\0', 12, 0);
         add_transition(a, 19, i, '\0', '\0', 19, 0);
         add_transition(a, 24, i, '\0', '\0', 24, 0);
+        add_transition(a, 34, i, '\0', '\0', 34, 0);
     }
     
     for (int i = 32; i <= 126; i++) { // Tabela ASCII - Caracteres
@@ -81,7 +106,7 @@ void make_transitions(AFD *a) {
 }
 
 int main(int argc, char *argv[]) {
-    AFD *a = create_afd(27, 0);
+    AFD *a = create_afd(41, 0);
     make_transitions(a);
     
     printf("%d\n", match(a, argv[1]));
