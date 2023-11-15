@@ -52,15 +52,10 @@ Memory * remove_memory(Memory *memory, char symbol) {
     return NULL;
 }
 
-void add_transition(AFD *afd, unsigned int at_state, char symbol, char add, char remove, unsigned int to_state) {
-    Node *node = malloc(sizeof(Node));
-    node->symbol = symbol;
-    node->add = add;
-    node->remove = remove;
-    node->state = to_state;
-    node->next = afd->transitions[at_state];
-
-    afd->transitions[at_state] = node;
+void add_transition(AFD *afd, unsigned int at_state, char symbol, char add, char remove, unsigned int to_state, unsigned int repeat) {
+    afd->transitions[at_state] = create_node(symbol, add, remove, to_state, afd->transitions[at_state]);
+    if(repeat)
+        afd->transitions[to_state] = create_node(symbol, add, remove, to_state, afd->transitions[to_state]);
 }
 
 void show_transitions(AFD *afd) {
@@ -102,23 +97,4 @@ unsigned int match(AFD *afd, const char *file_name) {
         return state == afd->final && memory == NULL;
     }
     return 0;
-}
-
-int main(int argc, char *argv[]) {
-    AFD *a = create_afd(9, 9); // Valida CPF
-    
-    for (char d = '0'; d <= '9'; d++) {
-        a->transitions[0] = create_node(d, '\0', '\0', 1, a->transitions[0]);
-        a->transitions[1] = create_node(d, '\0', '\0', 2, a->transitions[1]);
-        a->transitions[2] = create_node(d, '\0', '\0', 3, a->transitions[2]);
-        a->transitions[3] = create_node(d, '\0', '\0', 4, a->transitions[3]);
-        a->transitions[4] = create_node(d, '\0', '\0', 5, a->transitions[4]);
-        a->transitions[5] = create_node(d, '\0', '\0', 8, a->transitions[5]);
-        a->transitions[6] = create_node(d, '\0', '\0', 7, a->transitions[6]);
-        a->transitions[7] = create_node(d, '\0', '\0', 8, a->transitions[7]);
-        a->transitions[8] = create_node(d, '\0', '\0', 9, a->transitions[8]);
-    }
-    a->transitions[5] = create_node('-', '\0', '\0', 6, a->transitions[5]);
-    
-    printf("%d\n", match(a, "file.txt"));
 }

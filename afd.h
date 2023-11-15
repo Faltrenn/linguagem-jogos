@@ -35,7 +35,7 @@ Memory * add_memory(char symbol, Memory *next);
 
 Memory * remove_memory(Memory *memory, char symbol);
 
-void add_transition(AFD *afd, unsigned int at_state, char symbol, char add, char remove, unsigned int to_state);
+void add_transition(AFD *afd, unsigned int at_state, char symbol, char add, char remove, unsigned int to_state, unsigned int repeat);
 
 void show_transitions(AFD *afd);
 
