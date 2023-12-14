@@ -1,3 +1,9 @@
+# Custom
+*.yy.c
+*.tab.c
+*.tab.h
+*.output
+
 # Prerequisites
 *.d
 

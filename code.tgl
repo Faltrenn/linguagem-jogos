@@ -1,0 +1,286 @@
+/*
+    Descrição da linguagem
+    Dayanne e Emanuel
+*/
+
+include biblioteca;
+include biblioteca as bib;
+include class, funcao from biblioteca;
+include class, funcao from biblioteca as bib;
+include * from biblioteca;
+include * from biblioteca as bibli;
+
+include "arquivo.jpzm" as arquivo;
+include class, funcao from "arquivo.jpzm";
+include * from "arquivo.jpzm";
+include * from "arquivo.jpzm" as arq;
+include class, funcao from "arquivo.jpzm" as arquivo;
+
+func init(Tipo nome1, Tipo nome2) -> Tipo {
+    var Tipo? nome3;
+    let Tipo nome4 = Valor; // Obrigatório inicializar
+    var Tipo nome5 = Valor;
+    var Tipo? nome6 = NULL;
+    return nome5;
+}
+
+func init2(Tipo nome1, Tipo nome2, Tipo nome3 = 10) -> Tipo  {
+    var Tipo nome3 = nome3;
+    let Tipo nome4 = Valor; // Obrigatório inicializar
+    var Tipo nome5 = Valor;
+    return nome5;
+}
+
+func listas_tuplas_e_dicionarios() {
+    var [int] lista = [0, 10, 5, 1];
+    var [int] lista;
+    var [int: str] lista2 = [
+        0: "Opa",
+        10: "Epa"
+    ];
+}
+
+init(10, 20);
+init(10, 20, 10);
+init(10, 20, nome3: 10);
+
+// Função com retorno vazio
+func funcao1() {
+    print("Opa");
+}
+
+func funcao2() -> Void {
+    print("Opa");
+}
+
+// Função com retorno não vazio
+func funcao3() -> Int {
+    return 10;
+}
+
+func funcao4() -> Int { return 10; }
+
+func funcao5(Tipo a, Tipo b, Tipo c = valor, Tipo d = valor, Tipo e = valor) { }
+
+// Execução
+funcao5(valor, valor, valor);
+funcao5(valor, valor, e: valor);
+funcao5(valor, valor, valor, e: valor, d: valor);
+funcao5(valor, valor, e: valor, c: valor, d: valor);
+
+// Definir tipos
+typedef str to String;
+typedef (Tipo, Tipo) -> Tipo to novotipo;
+typedef (int, String) -> Void to funcao;
+
+// Função de callback
+func a(int idade, String nome) {
+    print("\(nome) tem \(idade) anos");
+}
+
+var (Tipo, Tipo) -> Tipo ?fs;dkmfnkjsdbfn_sdkjfbsjds = a;
+var (Tipo, Tipo) -> Tipo fhjsbdfkjsdnf_Sdfjknsdkfjn? = a;
+
+var funcao f = a;
+
+var funcao f = (idade, nome) => {
+    print("\(nome) tem \(idade) anos"); // "Print" não necessariamente será escrito assim
+};
+
+var funcao f = idade, nome => { // Parênteses opcionais
+    print("\(nome) tem \(idade) anos");
+};
+
+f(20, "Emanuel");
+
+func condicionais() {
+    /*
+        and - e
+        or  - ou
+        not - não
+    */
+    if (valor and valor and (valor or not valor)) { }
+    if valor and valor and (valor or not valor) { } // Parênteses opcionais
+    if valor and valor and (valor or not valor) {
+
+    } else {
+        
+    }
+
+    if valor and valor and (valor or not valor) {
+
+    } else if(condicao) {
+
+    }
+
+    if valor and valor and (valor or not valor) {
+
+    } else if condicao {
+
+    }
+
+    match (variavel) { // Sem necessidade do break
+        case (valor) {
+
+        }
+        case (valor) {
+
+        }
+        case valor {
+
+        }
+        case (default) {
+
+        }
+    }
+}
+
+func lacos() {
+    for i in 0...5 { } // De 0 inclusivo a 5 inclusivo
+    for i in 0..<5 { } // De 0 inclusivo a 5 exclusivo
+    for i in 0>..5 { } // De 0 exlusivo a 5 inclusivo
+    for i in 0>.<5 { } // De 0 exclusivo a 5 exclusivo
+
+    for i in lista {}
+
+    while valor { }
+    while (valor) { }
+
+    do {
+
+    } while valor;
+
+    do {
+
+    } while (valor);
+
+    var nome: Int? = NULL;
+    /*
+    print(nome) optional(10)
+    print(nome!) 10
+    print(nome ?? 0) 0 se nil, senão, nome
+    
+    if let nome = nome {
+        print(nome.toString())
+        print(nome.toFloat())
+        print(nome.toDouble())
+        print(nome.toLong())
+    }
+    */
+}
+
+class Pessoa1 {
+    var str nome;
+    let int ano_nascimento;
+    var int? ano_morte;
+
+    init(str nome, int ano_nascimento, int? ano_morte) { // Construtor
+        self.nome = nome;
+        self.ano_nascimento = ano_nascimento;
+        self.ano_morte = ano_morte;
+    }
+}
+
+class Pessoa1 {
+    var str nome;
+    let int ano_nascimento;
+    var int? ano_morte;
+
+    init(str nome, int ano_nascimento, int? ano_morte = NULL) { // Construtor
+        self.nome = nome;
+        self.ano_nascimento = ano_nascimento;
+        self.ano_morte = ano_morte;
+    }
+}
+
+class Pessoa1 {
+    var str nome;
+    let int ano_nascimento;
+    var int? ano_morte;
+
+    init(str nome, int ano_nascimento) { // Construtor
+        self.nome = nome;
+        self.ano_nascimento = ano_nascimento;
+    }
+}
+
+class Humano {
+    var float altura;
+    var int idade;
+
+    init(float altura, int idade) {
+        self.altura = altura;
+        self.idade = idade;
+    }
+}
+
+class Pessoa2 extends Humano {
+    var int cpf;
+
+    init(float altura, int idade, int cpf) {
+        Humano.init(altura, idade);
+        self.cpf = cpf;
+    }
+
+}
+
+class Pessoa3 extends Pessoa1, Pessoa2 {
+
+    static var str abc = "Opa";
+
+    init(str nome, int ano_nascimento, int? ano_morte = NULL, float altura, int idade, int cpf) { // Construtor
+        Pessoa1.init(nome, ano_nascimento, ano_morte);
+        Pessoa2.init(altura, idade, cpf);
+    }
+}
+
+class Color() {
+    var int _r;
+    var int r {
+        private get {
+            return _r/2;
+        }
+        set {
+            _r = newValue + 5;
+        }
+    };
+
+    var int g;
+    var int b;
+
+    static var Color branco = Color(255,255,255);
+
+    init(int red, int green, int blue) {
+        self._r = red;
+        self.g = green;
+        self.b = blue;
+    }
+}
+
+enum Enumerador {
+    case Caso1, Caso2, Caso3;
+
+    var str nome {
+        get {
+            match self {
+                case .Caso1 {
+                    return "Caso 1";
+                }
+                case .Caso2 {
+                    return "Caso 2";
+                }
+                case .Caso3 {
+                    return "Caso 3";
+                }
+            }
+        }
+    }
+}
+
+func main() { // Função principal
+    var Color cor = Color.branco;
+    var Color cor2 = .branco;
+
+    var Enumerador en = Enumerador.Caso1;
+    var Enumerador en2 = .Caso1;
+}
