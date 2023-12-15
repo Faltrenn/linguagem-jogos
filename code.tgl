@@ -69,9 +69,9 @@ funcao5(valor, valor, valor, e: valor, d: valor);
 funcao5(valor, valor, e: valor, c: valor, d: valor);
 
 // Definir tipos
-typedef str to String;
-typedef (Tipo, Tipo) -> Tipo to novotipo;
-typedef (int, String) -> Void to funcao;
+rename str to String;
+rename (Tipo, Tipo) -> Tipo to novotipo;
+rename (int, String) -> Void to funcao;
 
 // Função de callback
 func a(int idade, String nome) {
@@ -138,7 +138,7 @@ func condicionais() {
 func lacos() {
     for i in 0...5 { } // De 0 inclusivo a 5 inclusivo
     for i in 0..<5 { } // De 0 inclusivo a 5 exclusivo
-    for i in 0>..5 { } // De 0 exlusivo a 5 inclusivo
+    for i in 0>..5 { } // De 0 exclusivo a 5 inclusivo
     for i in 0>.<5 { } // De 0 exclusivo a 5 exclusivo
 
     for i in lista {}
@@ -178,29 +178,6 @@ class Pessoa1 {
         self.nome = nome;
         self.ano_nascimento = ano_nascimento;
         self.ano_morte = ano_morte;
-    }
-}
-
-class Pessoa1 {
-    var str nome;
-    let int ano_nascimento;
-    var int? ano_morte;
-
-    init(str nome, int ano_nascimento, int? ano_morte = NULL) { // Construtor
-        self.nome = nome;
-        self.ano_nascimento = ano_nascimento;
-        self.ano_morte = ano_morte;
-    }
-}
-
-class Pessoa1 {
-    var str nome;
-    let int ano_nascimento;
-    var int? ano_morte;
-
-    init(str nome, int ano_nascimento) { // Construtor
-        self.nome = nome;
-        self.ano_nascimento = ano_nascimento;
     }
 }
 
