@@ -10,6 +10,10 @@
   
 %% 
 
+"var"               { return TK_VAR; }
+
+"const"             { return TK_CONST; }
+
 "func"              { return TK_FUNC; }
 
 "("                 { return TK_OPEN_BRACKET; }
@@ -35,6 +39,8 @@
 "->"                { return TK_RETURN_TYPE; }
 
 ","                 { return TK_COMMA; }
+
+"="                 { return TK_EQUALS; }
 
 .                   { printf("unknown character %c\n", *yytext); }
 %% 

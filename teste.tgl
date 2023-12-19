@@ -1,4 +1,8 @@
 func nome () {
     teste(a, b)
     teste(a, b)
+    var int a = 0
+    var int b = 12
+    var int c = b
+    var int d
 }

@@ -14,9 +14,11 @@ char buffer[256];
 %}
 
 %token TK_FUNC TK_OPEN_BRACKET TK_CLOSE_BRACKET TK_OPEN_BRACE TK_CLOSE_BRACE TK_RETURN_TYPE
+%token TK_VAR TK_CONST
+%token TK_EQUALS
 %token TK_NUM_FLOAT TK_NUM_INT TK_STRING
 %token TK_NAME
-%token TK_COMMA
+%token TK_COMMA TK_WS
 
 %%
 program:
@@ -37,7 +39,7 @@ block: TK_OPEN_BRACE command TK_CLOSE_BRACE { $$ = strdup($2); }
 
 
 function_return: TK_RETURN_TYPE name { $$ = strdup(yytext); }
- |                                   { $$ = "void";}
+ |                                   { $$ = "void"; }
  ;
 
 
@@ -48,6 +50,7 @@ command: name TK_OPEN_BRACKET parameters TK_CLOSE_BRACKET
                                     strcat($$, strdup($3));
                                     strcat($$, ");");
                                 }
+ | define_var
  | command command
                                 {
                                     $$ = $1;
@@ -56,6 +59,23 @@ command: name TK_OPEN_BRACKET parameters TK_CLOSE_BRACKET
  |                              { $$ = ""; }
  ;
 
+
+ define_var: TK_VAR name name  {
+                                    $$ = $2;
+                                    strcat($$, " ");
+                                    strcat($$, $3);
+                                    strcat($$, ";");
+                               }
+  | TK_VAR name name TK_EQUALS term
+                               {
+                                    $$ = $2;
+                                    strcat($$, " ");
+                                    strcat($$, $3);
+                                    strcat($$, " = ");
+                                    strcat($$, $5);
+                                    strcat($$, ";");
+                               }
+ ;
 
 name: TK_NAME                   { $$ = strdup(yytext); }
  ;
