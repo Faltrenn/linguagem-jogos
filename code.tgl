@@ -174,7 +174,7 @@ class Pessoa1 {
     let int ano_nascimento;
     var int? ano_morte;
 
-    init(str nome, int ano_nascimento, int? ano_morte) { // Construtor
+    func init(str nome, int ano_nascimento, int? ano_morte) { // Construtor
         self.nome = nome;
         self.ano_nascimento = ano_nascimento;
         self.ano_morte = ano_morte;
@@ -185,7 +185,7 @@ class Humano {
     var float altura;
     var int idade;
 
-    init(float altura, int idade) {
+    func init(float altura, int idade) {
         self.altura = altura;
         self.idade = idade;
     }
@@ -194,7 +194,7 @@ class Humano {
 class Pessoa2 extends Humano {
     var int cpf;
 
-    init(float altura, int idade, int cpf) {
+    func init(float altura, int idade, int cpf) {
         Humano.init(altura, idade);
         self.cpf = cpf;
     }
@@ -205,7 +205,7 @@ class Pessoa3 extends Pessoa1, Pessoa2 {
 
     static var str abc = "Opa";
 
-    init(str nome, int ano_nascimento, int? ano_morte = NULL, float altura, int idade, int cpf) { // Construtor
+    func init(str nome, int ano_nascimento, int? ano_morte = NULL, float altura, int idade, int cpf) { // Construtor
         Pessoa1.init(nome, ano_nascimento, ano_morte);
         Pessoa2.init(altura, idade, cpf);
     }
@@ -227,7 +227,7 @@ class Color() {
 
     static var Color branco = Color(255,255,255);
 
-    init(int red, int green, int blue) {
+    func init(int red, int green, int blue) {
         self._r = red;
         self.g = green;
         self.b = blue;
