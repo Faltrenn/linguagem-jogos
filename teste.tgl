@@ -1,0 +1,4 @@
+func nome () {
+    teste(a, b)
+    teste(a, b)
+}
