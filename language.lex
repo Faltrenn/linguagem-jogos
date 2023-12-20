@@ -3,6 +3,9 @@
 #include <string.h>
 
 #include "language.tab.h"
+
+extern char *content;
+
 %} 
 
 %option nounput
@@ -53,11 +56,13 @@
 
 "<"                 { return TK_LOP_SMALLER; }
 
-
 .                   { printf("unknown character %c\n", *yytext); }
 %% 
   
 int yywrap(void)
 {
+    FILE *f = fopen("code.c", "w");
+    fprintf(f, "%s", content);
+
     return 1;
 } 

@@ -9,8 +9,8 @@ extern char *yytext;
 extern int yylex(void);
 extern int yyerror(char* s);
 
-unsigned int count = 0;
-char buffer[256];
+char *content = NULL;
+
 %}
 
 %token TK_FUNC TK_OPEN_BRACKET TK_CLOSE_BRACKET TK_OPEN_BRACE TK_CLOSE_BRACE TK_RETURN_TYPE
@@ -24,13 +24,23 @@ char buffer[256];
 
 %%
 program:
-    | func_create program
+    | program func_create       {
+                                    if(content != NULL) {
+                                        char *aux = strdup(content);
+                                        free(content);
+                                        content = malloc((1 + strlen(aux) + strlen($2)) * sizeof(char));
+                                        strcpy(content, aux);
+                                        strcat(content, $2);
+                                    } else {
+                                        content = malloc((1 + strlen($2)) * sizeof(char));
+                                        strcpy(content, $2);
+                                    }
+                                }
 ;
 
 
 conditional:
-    TK_IF condition block
-                                {
+    TK_IF condition block       {
                                     free($$);
                                     $$ = malloc((5 + strlen($2) + strlen($3)) * sizeof(char));
                                     strcpy($$, "if(");
@@ -43,6 +53,22 @@ conditional:
 condition:
     value                 { $$ = strdup($1); }
     | TK_OPEN_BRACKET value TK_CLOSE_BRACKET { $$ = $2; }
+;
+
+
+func_create:
+    TK_FUNC name TK_OPEN_BRACKET func_create_param TK_CLOSE_BRACKET func_create_return block
+                                     {
+                                        free($$);
+                                        $$ = malloc((5 + strlen($6) + strlen($2) + strlen($4) + strlen($7)) * sizeof(char));
+                                        strcpy($$, $6);
+                                        strcat($$, " ");
+                                        strcat($$, $2);
+                                        strcat($$, "(");
+                                        strcat($$, $4);
+                                        strcat($$, ")");
+                                        strcat($$, $7);
+                                     }
 ;
 
 
@@ -68,14 +94,6 @@ func_create_param:
                                 strcat($$, $4);
                             }
 
-;
-
-
-func_create:
-    TK_FUNC name TK_OPEN_BRACKET func_create_param TK_CLOSE_BRACKET func_create_return block
-                                     {
-                                         printf("%s %s (%s)%s\n", $6, $2, $4, $7);
-                                     }
 ;
 
 

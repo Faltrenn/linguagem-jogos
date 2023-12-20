@@ -4,6 +4,7 @@
 *.tab.h
 *.output
 compiler
+code.c
 
 # Prerequisites
 *.d

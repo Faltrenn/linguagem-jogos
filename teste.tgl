@@ -1,19 +1,7 @@
-func main(int a, int b) -> int {
-    teste()
-    teste()
-    var int a = 10
-
-
-    teste()
-    var int b = teste(a, b)
+func main() -> int{
+    printf("boa")
 }
-
-func iru(){
-    if valor > 10 {
-        print("boa")
-    }
-
-    if(true) {
-        var int a = 10
-    }
+func boa() -> int{
+    printf("boa")
 }
+func teste() -> int{}
