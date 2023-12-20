@@ -17,6 +17,12 @@
 
 "if"                { return TK_IF; }
 
+"not"               { return TK_LOP_NOT; }
+
+"true"              { return TK_VAL_TRUE; }
+
+"false"             { return TK_VAL_FALSE; }
+
 "("                 { return TK_OPEN_BRACKET; }
 
 ")"                 { return TK_CLOSE_BRACKET; }
@@ -27,7 +33,7 @@
 
 [0-9]+              { return TK_VAL_INT; }
 
-[0-9]*\.[0-9]+       { return TK_VAL_FLOAT; }
+[0-9]*\.[0-9]+      { return TK_VAL_FLOAT; }
 
 [a-z][a-z0-9]*      { return TK_NAME; }
 
@@ -42,6 +48,11 @@
 ","                 { return TK_COMMA; }
 
 "="                 { return TK_EQUALS; }
+
+">"                 { return TK_LOP_BIGGER; }
+
+"<"                 { return TK_LOP_SMALLER; }
+
 
 .                   { printf("unknown character %c\n", *yytext); }
 %% 

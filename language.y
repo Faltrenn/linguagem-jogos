@@ -16,6 +16,7 @@ char buffer[256];
 %token TK_FUNC TK_OPEN_BRACKET TK_CLOSE_BRACKET TK_OPEN_BRACE TK_CLOSE_BRACE TK_RETURN_TYPE
 %token TK_VAR TK_CONST
 %token TK_EQUALS
+%token TK_LOP_BIGGER TK_LOP_SMALLER TK_LOP_NOT TK_VAL_TRUE TK_VAL_FALSE
 %token TK_VAL_FLOAT TK_VAL_INT TK_VAL_STRING
 %token TK_NAME
 %token TK_COMMA TK_WS
@@ -172,12 +173,36 @@ block:
 ;
 
 
+logic_op:
+    TK_LOP_BIGGER                   { $$ = ">"; }
+    | TK_LOP_SMALLER                { $$ = "<"; }
+    | TK_EQUALS TK_EQUALS           { $$ = "=="; }
+    | TK_LOP_BIGGER TK_EQUALS       { $$ = ">="; }
+    | TK_LOP_SMALLER TK_EQUALS      { $$ = "<="; }
+
+
+value_bool:
+    TK_VAL_TRUE                     { $$ = "1"; }
+    | TK_VAL_FALSE                  { $$ = "0"; }
+    | value
+    | name logic_op value_bool      {
+                                        $1 = strdup($1);
+                                        free($$);
+                                        $$ = malloc((1+ strlen($1) + strlen($2) + strlen($3)) * sizeof(char));
+                                        strcpy($$, $1);
+                                        strcat($$, $2);
+                                        strcat($$, $3);
+                                    }
+;
+
+
 value:
     func_exec
     | TK_VAL_INT                    { $$ = strdup(yytext); }
     | TK_VAL_STRING                 { $$ = strdup(yytext); }
     | TK_VAL_FLOAT                  { $$ = strdup(yytext); }
-    | name                          { $$ = strdup($1); }
+    | name
+    | value_bool
 ;
 
 

@@ -9,11 +9,11 @@ func main(int a, int b) -> int {
 }
 
 func iru(){
-    if valor {
+    if valor > 10 {
         print("boa")
     }
 
-    if(valor) {
+    if(true) {
         var int a = 10
     }
 }
