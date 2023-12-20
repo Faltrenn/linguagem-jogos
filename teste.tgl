@@ -1,8 +1,19 @@
-func nome () {
-    teste(a, b)
-    teste(a, b)
-    var int a = 0
-    var int b = 12
-    var int c = b
-    var int d
+func main(int a, int b) -> int {
+    teste()
+    teste()
+    var int a = 10
+
+
+    teste()
+    var int b = teste(a, b)
+}
+
+func iru(){
+    if valor {
+        print("boa")
+    }
+
+    if(valor) {
+        var int a = 10
+    }
 }

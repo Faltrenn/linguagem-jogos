@@ -9,12 +9,13 @@
 %option noinput
   
 %% 
+"func"              { return TK_FUNC; }
 
 "var"               { return TK_VAR; }
 
 "const"             { return TK_CONST; }
 
-"func"              { return TK_FUNC; }
+"if"                { return TK_IF; }
 
 "("                 { return TK_OPEN_BRACKET; }
 
@@ -24,13 +25,13 @@
 
 "}"                 { return TK_CLOSE_BRACE; }
 
-[0-9]+              { return TK_NUM_INT; }
+[0-9]+              { return TK_VAL_INT; }
 
-[0-9]*.[0-9]+       { return TK_NUM_FLOAT; }
+[0-9]*\.[0-9]+       { return TK_VAL_FLOAT; }
 
 [a-z][a-z0-9]*      { return TK_NAME; }
 
-\"[ -~]*\"          { return TK_STRING; }
+\"[ -~]*\"          { return TK_VAL_STRING; }
  
 \n                  {  }
 
@@ -47,5 +48,5 @@
   
 int yywrap(void)
 {
-    return 0;
+    return 1;
 } 

@@ -16,86 +16,174 @@ char buffer[256];
 %token TK_FUNC TK_OPEN_BRACKET TK_CLOSE_BRACKET TK_OPEN_BRACE TK_CLOSE_BRACE TK_RETURN_TYPE
 %token TK_VAR TK_CONST
 %token TK_EQUALS
-%token TK_NUM_FLOAT TK_NUM_INT TK_STRING
+%token TK_VAL_FLOAT TK_VAL_INT TK_VAL_STRING
 %token TK_NAME
 %token TK_COMMA TK_WS
+%token TK_IF
 
 %%
 program:
- | function                     { return 0; }
- | program function             { return 0; }
- ;
-
-
-function: TK_FUNC name TK_OPEN_BRACKET TK_CLOSE_BRACKET function_return block
-                                {
-                                    printf("%s %s (){%s}\n", $5, $2, $6);
-                                }
- ;
-
-
-block: TK_OPEN_BRACE command TK_CLOSE_BRACE { $$ = strdup($2); }
- ;
-
-
-function_return: TK_RETURN_TYPE name { $$ = strdup(yytext); }
- |                                   { $$ = "void"; }
- ;
-
-
-command: name TK_OPEN_BRACKET parameters TK_CLOSE_BRACKET
-                                {
-                                    $$ = $1;
-                                    strcat($$, "(");
-                                    strcat($$, strdup($3));
-                                    strcat($$, ");");
-                                }
- | define_var
- | command command
-                                {
-                                    $$ = $1;
-                                    strcat($$, $2);
-                                }
- |                              { $$ = ""; }
- ;
-
-
- define_var: TK_VAR name name  {
-                                    $$ = $2;
-                                    strcat($$, " ");
-                                    strcat($$, $3);
-                                    strcat($$, ";");
-                               }
-  | TK_VAR name name TK_EQUALS term
-                               {
-                                    $$ = $2;
-                                    strcat($$, " ");
-                                    strcat($$, $3);
-                                    strcat($$, " = ");
-                                    strcat($$, $5);
-                                    strcat($$, ";");
-                               }
- ;
-
-name: TK_NAME                   { $$ = strdup(yytext); }
- ;
-
-
-parameters: term                { $$ = $1; }
- | parameters TK_COMMA term     {
-                                    $$ = $1;
-
-                                    strcat($$, ", ");
-                                    strcat($$, strdup(yytext));
-                                }
- |                              { $$ = strdup(""); }
+    | func_create program
 ;
 
 
-term: TK_NUM_INT                { $$ = strdup(yytext); }
- | TK_NUM_FLOAT                 { $$ = strdup(yytext); }
- | name                         { $$ = strdup(yytext); }
- ;
+conditional:
+    TK_IF condition block
+                                {
+                                    free($$);
+                                    $$ = malloc((5 + strlen($2) + strlen($3)) * sizeof(char));
+                                    strcpy($$, "if(");
+                                    strcat($$, $2);
+                                    strcat($$, ")");
+                                    strcat($$, $3);
+                                }
+
+
+condition:
+    value                 { $$ = strdup($1); }
+    | TK_OPEN_BRACKET value TK_CLOSE_BRACKET { $$ = $2; }
+;
+
+
+func_create_param:
+                            { $$ = ""; }
+    | name name             {
+                                $1 = strdup($1);
+                                free($$);
+                                $$ = malloc((2 + strlen($1) + strlen($2)) * sizeof(char));
+                                strcpy($$, $1);
+                                strcat($$, " ");
+                                strcat($$, $2);
+                            }
+    | name name TK_COMMA func_create_param
+                            {
+                                $1 = strdup($1);
+                                free($$);
+                                $$ = malloc((3 + strlen($1) + strlen($2) + strlen($4)) * sizeof(char));
+                                strcpy($$, $1);
+                                strcat($$, " ");
+                                strcat($$, $2);
+                                strcat($$, ",");
+                                strcat($$, $4);
+                            }
+
+;
+
+
+func_create:
+    TK_FUNC name TK_OPEN_BRACKET func_create_param TK_CLOSE_BRACKET func_create_return block
+                                     {
+                                         printf("%s %s (%s)%s\n", $6, $2, $4, $7);
+                                     }
+;
+
+
+func_create_return:
+                                    { $$ = "void"; }
+    | TK_RETURN_TYPE name           { $$ = strdup($2); }
+;
+
+
+commands:
+    command                     { $$ = strdup($1); }
+    | command commands          {
+                                    $1 = strdup($1);
+                                    free($$);
+                                    $$ = malloc((1 + strlen($1) + strlen($2)) * sizeof(char));
+                                    strcpy($$, $1);
+                                    strcat($$, $2);
+                                }
+;
+
+
+command:
+                                { $$ = ""; }
+    | func_exec                 {
+                                    char *aux = strdup($$);
+                                    free($$);
+                                    $$ = malloc((2 + strlen(aux)) * sizeof(char));
+                                    strcpy($$, aux);
+                                    strcat($$, ";");
+                                    free(aux);
+                                }
+    | define_var
+    | conditional
+;
+
+
+func_exec_param:
+                                    { $$ = ""; }
+    | value                         { $$ = strdup($1); }
+    | value TK_COMMA func_exec_param     {
+                                        $1 = strdup($1);
+                                        free($$);
+                                        $$ = malloc((2 + strlen($1) + strlen($3)) * sizeof(char));
+                                        strcpy($$, $1);
+                                        strcat($$, ",");
+                                        strcat($$, $3);
+                                    }
+;
+
+func_exec:
+    name TK_OPEN_BRACKET func_exec_param TK_CLOSE_BRACKET
+                                {
+                                    $1 = strdup($1);
+                                    free($$);
+                                    $$ = malloc((4 + strlen($1) + strlen($3)) * sizeof(char));
+                                    strcpy($$, $1);
+                                    strcat($$, "(");
+                                    strcat($$, $3);
+                                    strcat($$, ")");
+                                }
+;
+
+
+ define_var:
+    TK_VAR name name assign     {
+                                    free($$);
+                                    $$ = malloc((6 + strlen($2) + strlen($3) + strlen($4)) * sizeof(char));
+                                    strcpy($$, $2);
+                                    strcat($$, " ");
+                                    strcat($$, $3);
+                                    strcat($$, $4);
+                                    strcat($$, ";");
+                                }
+;
+
+
+assign:
+                                {   $$ = strdup("");    }
+    | TK_EQUALS value           {
+                                    free($$);
+                                    $$ = malloc((2 + strlen($2)) * sizeof(char));
+                                    strcpy($$, "=");
+                                    strcat($$, $2);
+                                }
+
+
+block:
+    TK_OPEN_BRACE commands TK_CLOSE_BRACE {
+                                            free($$);
+                                            $$ = malloc((3 + strlen($2)) * sizeof(char));
+                                            strcpy($$, "{");
+                                            strcat($$, $2);
+                                            strcat($$, "}");
+                                        }
+;
+
+
+value:
+    func_exec
+    | TK_VAL_INT                    { $$ = strdup(yytext); }
+    | TK_VAL_STRING                 { $$ = strdup(yytext); }
+    | TK_VAL_FLOAT                  { $$ = strdup(yytext); }
+    | name                          { $$ = strdup($1); }
+;
+
+
+name:
+    TK_NAME                         { $$ = strdup(yytext); }
+;
 %%
 
 int main(int argc, char **argv)
