@@ -8,6 +8,7 @@
 extern char *yytext;
 extern int yylex(void);
 extern int yyerror(char* s);
+char *recover_value(char* s);
 
 char *content = NULL;
 
@@ -21,7 +22,7 @@ char *content = NULL;
 %token TK_NAME
 %token TK_COMMA TK_DOT
 %token TK_IF
-%token TK_WHILE TK_DO
+%token TK_WHILE TK_DO TK_FOR TK_IN TK_FOR_INC_INC TK_FOR_INC_EXC TK_FOR_EXC_INC TK_FOR_EXC_EXC
 
 %%
 program:
@@ -133,7 +134,7 @@ command:
 ;
 
 loop_repet:
-    TK_WHILE loop_condition block 
+    TK_WHILE loop_cond_while block 
                                    {
                                         free($$);
                                         $$ = malloc((8 + strlen($2) + strlen($3)) * sizeof(char));
@@ -142,7 +143,7 @@ loop_repet:
                                         strcat($$, ")");
                                         strcat($$, $3);
                                     }
-    | TK_DO block TK_WHILE loop_condition 
+    | TK_DO block TK_WHILE loop_cond_while 
                                     {
                                         free($$);
                                         $$ = malloc((11 + strlen($2) + strlen($4)) * sizeof(char));
@@ -152,13 +153,101 @@ loop_repet:
                                         strcat($$, $4);
                                         strcat($$, ");");
                                     }
+    | TK_FOR loop_for_cond block 
+                                    {
+                                        free($$);
+                                        $$ = malloc((6 + strlen($2) + strlen($3)) * sizeof(char));
+                                        strcpy($$, "for(");
+                                        strcat($$, $2);
+                                        strcat($$, ")");
+                                        strcat($$, $3);
+                                    }
 ;
 
-loop_condition:
+loop_cond_while:
     TK_OPEN_BRACKET value TK_CLOSE_BRACKET
                                     { $$ = strdup($2); }
     | value
 ;   
+
+loop_for_cond:
+    name TK_IN num TK_FOR_INC_INC num 
+                                    {
+                                        $1 = strdup($1);
+                                        free($$);
+                                        $$ = malloc((24 + (3 * strlen($1)) + strlen($3) + strlen($5)) * sizeof(char));
+                                        strcpy($$, "Int ");
+                                        strcat($$, $1);
+                                        strcat($$, "=");
+                                        strcat($$, $3);
+                                        strcat($$, ";");
+                                        strcat($$, $1);
+                                        strcat($$, ".value<=");
+                                        $5 = recover_value($5);
+                                        strcat($$, $5);
+                                        strcat($$, ";");
+                                        strcat($$, $1);
+                                        strcat($$, ".value++");
+
+                                    }
+    | name TK_IN num TK_FOR_INC_EXC num 
+                                    {
+                                        $1 = strdup($1);
+                                        free($$);
+                                        $$ = malloc((28 + (3 * strlen($1)) + strlen($3) + strlen($5)) * sizeof(char));
+                                        strcpy($$, "Int ");
+                                        strcat($$, $1);
+                                        strcat($$, "=");
+                                        strcat($$, $3);
+                                        strcat($$, ";");
+                                        strcat($$, $1);
+                                        strcat($$, ".value<");
+                                        $5 = recover_value($5);
+                                        strcat($$, $5);
+                                        strcat($$, ";");
+                                        strcat($$, $1);
+                                        strcat($$, ".value++");
+
+                                    }
+    | name TK_IN num TK_FOR_EXC_INC num 
+                                    {
+                                        $1 = strdup($1);
+                                        free($$);
+                                        $$ = malloc((54 + (3 * strlen($1)) + strlen($3) + strlen($5)) * sizeof(char));
+                                        strcpy($$, "Int ");
+                                        strcat($$, $1);
+                                        strcat($$, "=int_add(");
+                                        strcat($$, $3);
+                                        strcat($$, ", int_create(1));");
+                                        strcat($$, $1);
+                                        strcat($$, ".value<=");
+                                        $5 = recover_value($5);
+                                        strcat($$, $5);
+                                        strcat($$, ";");
+                                        strcat($$, $1);
+                                        strcat($$, ".value++");
+
+                                    }
+    | name TK_IN num TK_FOR_EXC_EXC num 
+                                    {
+                                        $1 = strdup($1);
+                                        free($$);
+                                        $$ = malloc((53 + (3 * strlen($1)) + strlen($3) + strlen($5)) * sizeof(char));
+                                        strcpy($$, "Int ");
+                                        strcat($$, $1);
+                                        strcat($$, "=int_add(");
+                                        strcat($$, $3);
+                                        strcat($$, ", int_create(1));");
+                                        strcat($$, $1);
+                                        strcat($$, ".value<");
+                                        $5 = recover_value($5);
+                                        strcat($$, $5);
+                                        strcat($$, ";");
+                                        strcat($$, $1);
+                                        strcat($$, ".value++");
+
+                                    }
+;
 
 func_exec_param:
                                     { $$ = strdup(""); }
@@ -255,23 +344,26 @@ value_bool:
                                     }
 ;
 
-
-value:
-    func_exec
+num:
     | TK_VAL_INT                    {
                                         free($$);
                                         $$ = strdup("int_create(");
                                         strcat($$, strdup(yytext));
                                         strcat($$, ")");
                                     }
-    | TK_VAL_STRING                 { $$ = strdup(yytext); }
     | TK_VAL_FLOAT                  {
                                         free($$);
                                         $$ = strdup("float_create(");
                                         strcat($$, strdup(yytext));
                                         strcat($$, ")");
                                     }
+;
+
+value:
+    func_exec
+    | TK_VAL_STRING                 { $$ = strdup(yytext); }
     | name
+    | num
     | value_bool
 ;
 
@@ -296,4 +388,33 @@ int yyerror(char *s)
     fprintf(stderr, "error: %s\n", s);
 
     return 0;
+}
+
+char *recover_value(char* s) 
+{
+    int i = 0;
+
+    do {
+        i++;
+    } while (s[i] != '(' );
+
+    int j = i;
+
+    while (s[i] != ')' ) {
+        i++;
+    }
+
+    char *aux = malloc((i - j) * sizeof(char));
+
+    int k = 0;
+
+    while (j + 1 < i) {
+        aux[k] = s[j + 1];
+        k++;
+        j++;
+    }
+
+    aux[k] = '\0';
+
+    return aux;
 }
