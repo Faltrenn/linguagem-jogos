@@ -18,6 +18,7 @@ char *content = NULL;
 %token TK_VAR TK_CONST
 %token TK_EQUALS
 %token TK_LOP_BIGGER TK_LOP_SMALLER TK_LOP_NOT TK_VAL_TRUE TK_VAL_FALSE
+%token TK_ADD TK_SUB TK_MUL TK_DIV
 %token TK_VAL_FLOAT TK_VAL_INT TK_VAL_STRING
 %token TK_NAME
 %token TK_COMMA TK_DOT
@@ -39,6 +40,7 @@ program:
                                         strcat(content, $2);
                                     }
                                 }
+
 ;
 
 
@@ -309,7 +311,7 @@ assign:
                                     strcpy($$, "=");
                                     strcat($$, $2);
                                 }
-
+;
 
 block:
     TK_OPEN_BRACE commands TK_CLOSE_BRACE   {
@@ -328,12 +330,12 @@ logic_op:
     | TK_EQUALS TK_EQUALS           { $$ = strdup("=="); }
     | TK_LOP_BIGGER TK_EQUALS       { $$ = strdup(">="); }
     | TK_LOP_SMALLER TK_EQUALS      { $$ = strdup("<="); }
+;
 
 
 value_bool:
     TK_VAL_TRUE                     { $$ = strdup("1"); }
     | TK_VAL_FALSE                  { $$ = strdup("0"); }
-    | value
     | name logic_op value_bool      {
                                         $1 = strdup($1);
                                         free($$);
@@ -363,10 +365,42 @@ value:
     func_exec
     | TK_VAL_STRING                 { $$ = strdup(yytext); }
     | name
+    | operation_math
     | num
     | value_bool
 ;
 
+operation_math:
+    num
+    | num math_op operation_math {
+                            $1 = strdup($1);
+                            free($$);
+
+                            char *aux = strdup($1);
+                            if (strncmp($1, "int_create(", 11) == 0) {
+                                aux = strdup("int");
+                            } else  {
+                                aux = strdup("float");
+                            } 
+
+                            $$ = malloc((8 +strlen(aux) + strlen($1) + strlen($2) + strlen($3)) * sizeof(char));
+                            if (strcmp($2, "+") == 0)
+                                sprintf($$, "%s_add(%s, %s)", aux, $1, $3);
+                            else if (strcmp($2, "-") == 0)
+                                sprintf($$, "%s_sub(%s, %s)", aux, $1, $3);
+                            else if (strcmp($2, "*") == 0)
+                                sprintf($$, "%s_mul(%s, %s)", aux, $1, $3);
+                            else if (strcmp($2, "/") == 0)
+                                sprintf($$, "%s_div(%s, %s)", aux, $1, $3);
+                        }
+    
+;
+
+math_op:
+    TK_ADD                          { $$ = strdup("+"); }
+    | TK_SUB                        { $$ = strdup("-"); }
+    | TK_MUL                        { $$ = strdup("*"); }
+    | TK_DIV                        { $$ = strdup("/"); }
 
 name:
     TK_NAME                         { $$ = strdup(yytext); }
