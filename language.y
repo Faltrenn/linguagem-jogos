@@ -17,12 +17,13 @@ char *content = NULL;
 %token TK_FUNC TK_OPEN_BRACKET TK_CLOSE_BRACKET TK_OPEN_BRACE TK_CLOSE_BRACE TK_RETURN_TYPE
 %token TK_VAR TK_CONST
 %token TK_EQUALS
-%token TK_LOP_BIGGER TK_LOP_SMALLER TK_LOP_NOT TK_VAL_TRUE TK_VAL_FALSE
+%token TK_COP_BIGGER TK_COP_SMALLER TK_COP_NOT TK_VAL_TRUE TK_VAL_FALSE
 %token TK_ADD TK_SUB TK_MUL TK_DIV
 %token TK_VAL_FLOAT TK_VAL_INT TK_VAL_STRING
 %token TK_NAME
 %token TK_COMMA TK_DOT
 %token TK_IF
+%token TK_LOP_INTER
 %token TK_WHILE TK_DO TK_FOR TK_IN TK_FOR_INC_INC TK_FOR_INC_EXC TK_FOR_EXC_INC TK_FOR_EXC_EXC
 
 %%
@@ -335,19 +336,20 @@ block:
 ;
 
 
-logic_op:
-    TK_LOP_BIGGER                   { $$ = strdup(">"); }
-    | TK_LOP_SMALLER                { $$ = strdup("<"); }
+comparison_op:
+    TK_COP_BIGGER                   { $$ = strdup(">"); }
+    | TK_COP_SMALLER                { $$ = strdup("<"); }
     | TK_EQUALS TK_EQUALS           { $$ = strdup("=="); }
-    | TK_LOP_BIGGER TK_EQUALS       { $$ = strdup(">="); }
-    | TK_LOP_SMALLER TK_EQUALS      { $$ = strdup("<="); }
+    | TK_COP_BIGGER TK_EQUALS       { $$ = strdup(">="); }
+    | TK_COP_SMALLER TK_EQUALS      { $$ = strdup("<="); }
 ;
 
 
 value_bool:
     TK_VAL_TRUE                     { $$ = strdup("1"); }
     | TK_VAL_FALSE                  { $$ = strdup("0"); }
-    | name logic_op value_bool      {
+    | num_and_var comparison_op num_and_var      
+                                    {
                                         $1 = strdup($1);
                                         free($$);
                                         $$ = malloc((1+ strlen($1) + strlen($2) + strlen($3)) * sizeof(char));
@@ -375,10 +377,14 @@ num:
 value:
     func_exec
     | TK_VAL_STRING                 { $$ = strdup(yytext); }
-    | name
+    | num_and_var
     | operation_math
-    | num
     | value_bool
+;
+
+num_and_var:
+    num
+    | name
 ;
 
 operation_math:

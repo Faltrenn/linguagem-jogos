@@ -36,11 +36,13 @@ extern char *content;
 
 ">.<"               { return TK_FOR_EXC_EXC; }
 
-"not"               { return TK_LOP_NOT; }
+"not"               { return TK_COP_NOT; }
 
 "true"              { return TK_VAL_TRUE; }
 
 "false"             { return TK_VAL_FALSE; }
+
+"inter"             { return TK_LOP_INTER; }
 
 "."                 { return TK_DOT; }
 
@@ -70,9 +72,9 @@ extern char *content;
 
 "="                 { return TK_EQUALS; }
 
-">"                 { return TK_LOP_BIGGER; }
+">"                 { return TK_COP_BIGGER; }
 
-"<"                 { return TK_LOP_SMALLER; }
+"<"                 { return TK_COP_SMALLER; }
 
 "+"                 { return TK_ADD; }
 
