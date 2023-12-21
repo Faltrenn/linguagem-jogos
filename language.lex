@@ -26,6 +26,8 @@ extern char *content;
 
 "false"             { return TK_VAL_FALSE; }
 
+"."                 { return TK_DOT; }
+
 "("                 { return TK_OPEN_BRACKET; }
 
 ")"                 { return TK_CLOSE_BRACKET; }
@@ -38,7 +40,7 @@ extern char *content;
 
 [0-9]*\.[0-9]+      { return TK_VAL_FLOAT; }
 
-[a-z][a-z0-9]*      { return TK_NAME; }
+[a-zA-Z][a-zA-Z0-9_]*      { return TK_NAME; }
 
 \"[ -~]*\"          { return TK_VAL_STRING; }
  

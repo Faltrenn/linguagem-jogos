@@ -19,7 +19,7 @@ char *content = NULL;
 %token TK_LOP_BIGGER TK_LOP_SMALLER TK_LOP_NOT TK_VAL_TRUE TK_VAL_FALSE
 %token TK_VAL_FLOAT TK_VAL_INT TK_VAL_STRING
 %token TK_NAME
-%token TK_COMMA TK_WS
+%token TK_COMMA TK_DOT
 %token TK_IF
 
 %%
@@ -32,8 +32,9 @@ program:
                                         strcpy(content, aux);
                                         strcat(content, $2);
                                     } else {
-                                        content = malloc((1 + strlen($2)) * sizeof(char));
-                                        strcpy(content, $2);
+                                        content = malloc((39 + strlen($2)) * sizeof(char));
+                                        strcpy(content, "#include \"basic.h\"\n#include <stdio.h>\n");
+                                        strcat(content, $2);
                                     }
                                 }
 ;
@@ -73,7 +74,7 @@ func_create:
 
 
 func_create_param:
-                            { $$ = ""; }
+                            { $$ = strdup(""); }
     | name name             {
                                 $1 = strdup($1);
                                 free($$);
@@ -98,7 +99,7 @@ func_create_param:
 
 
 func_create_return:
-                                    { $$ = "void"; }
+                                    { $$ = strdup("void"); }
     | TK_RETURN_TYPE name           { $$ = strdup($2); }
 ;
 
@@ -116,7 +117,7 @@ commands:
 
 
 command:
-                                { $$ = ""; }
+                                { $$ = strdup(""); }
     | func_exec                 {
                                     char *aux = strdup($$);
                                     free($$);
@@ -131,7 +132,7 @@ command:
 
 
 func_exec_param:
-                                    { $$ = ""; }
+                                    { $$ = strdup(""); }
     | value                         { $$ = strdup($1); }
     | value TK_COMMA func_exec_param     {
                                         $1 = strdup($1);
@@ -152,6 +153,17 @@ func_exec:
                                     strcpy($$, $1);
                                     strcat($$, "(");
                                     strcat($$, $3);
+                                    strcat($$, ")");
+                                }
+    | name TK_DOT name TK_OPEN_BRACKET func_exec_param TK_CLOSE_BRACKET     {
+                                    $1 = strdup($1);
+                                    free($$);
+                                    $$ = malloc((4 + strlen($1) + strlen($3) + strlen($5)) * sizeof(char));
+                                    strcpy($$, $1);
+                                    strcat($$, ".");
+                                    strcat($$, $3);
+                                    strcat($$, "(");
+                                    strcat($$, $5);
                                     strcat($$, ")");
                                 }
 ;
@@ -181,27 +193,27 @@ assign:
 
 
 block:
-    TK_OPEN_BRACE commands TK_CLOSE_BRACE {
-                                            free($$);
-                                            $$ = malloc((3 + strlen($2)) * sizeof(char));
-                                            strcpy($$, "{");
-                                            strcat($$, $2);
-                                            strcat($$, "}");
-                                        }
+    TK_OPEN_BRACE commands TK_CLOSE_BRACE   {
+                                                free($$);
+                                                $$ = malloc((3 + strlen($2)) * sizeof(char));
+                                                strcpy($$, "{");
+                                                strcat($$, $2);
+                                                strcat($$, "}");
+                                            }
 ;
 
 
 logic_op:
-    TK_LOP_BIGGER                   { $$ = ">"; }
-    | TK_LOP_SMALLER                { $$ = "<"; }
-    | TK_EQUALS TK_EQUALS           { $$ = "=="; }
-    | TK_LOP_BIGGER TK_EQUALS       { $$ = ">="; }
-    | TK_LOP_SMALLER TK_EQUALS      { $$ = "<="; }
+    TK_LOP_BIGGER                   { $$ = strdup(">"); }
+    | TK_LOP_SMALLER                { $$ = strdup("<"); }
+    | TK_EQUALS TK_EQUALS           { $$ = strdup("=="); }
+    | TK_LOP_BIGGER TK_EQUALS       { $$ = strdup(">="); }
+    | TK_LOP_SMALLER TK_EQUALS      { $$ = strdup("<="); }
 
 
 value_bool:
-    TK_VAL_TRUE                     { $$ = "1"; }
-    | TK_VAL_FALSE                  { $$ = "0"; }
+    TK_VAL_TRUE                     { $$ = strdup("1"); }
+    | TK_VAL_FALSE                  { $$ = strdup("0"); }
     | value
     | name logic_op value_bool      {
                                         $1 = strdup($1);
@@ -216,9 +228,19 @@ value_bool:
 
 value:
     func_exec
-    | TK_VAL_INT                    { $$ = strdup(yytext); }
+    | TK_VAL_INT                    {
+                                        free($$);
+                                        $$ = strdup("int_create(");
+                                        strcat($$, strdup(yytext));
+                                        strcat($$, ")");
+                                    }
     | TK_VAL_STRING                 { $$ = strdup(yytext); }
-    | TK_VAL_FLOAT                  { $$ = strdup(yytext); }
+    | TK_VAL_FLOAT                  {
+                                        free($$);
+                                        $$ = strdup("float_create(");
+                                        strcat($$, strdup(yytext));
+                                        strcat($$, ")");
+                                    }
     | name
     | value_bool
 ;

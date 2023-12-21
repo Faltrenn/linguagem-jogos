@@ -1,7 +1,6 @@
 func main() -> int{
-    printf("boa")
+    var Int a = 10
+    var Int b = a
+    var Float c = .4
+    printf("Int: %s\nFloat: %s\n", b.to_str(b), c.to_str(c))
 }
-func boa() -> int{
-    printf("boa")
-}
-func teste() -> int{}
