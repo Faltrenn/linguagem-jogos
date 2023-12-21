@@ -270,8 +270,19 @@ func_exec:
                                 {
                                     $1 = strdup($1);
                                     free($$);
+                                    if (strcmp($1, "Vector2") == 0) {
+                                        free($1);
+                                        $1 = malloc(15 * sizeof(char));
+                                        strcpy($1, "vector2_create");
+                                    } else if (strcmp($1, "Circle") == 0) {
+                                        free($1);
+                                        $1 = malloc(14 * sizeof(char));
+                                        strcpy($1, "circle_create");
+                                    }
+
                                     $$ = malloc((4 + strlen($1) + strlen($3)) * sizeof(char));
                                     strcpy($$, $1);
+                                    
                                     strcat($$, "(");
                                     strcat($$, $3);
                                     strcat($$, ")");
