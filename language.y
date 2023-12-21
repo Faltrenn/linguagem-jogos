@@ -21,6 +21,7 @@ char *content = NULL;
 %token TK_NAME
 %token TK_COMMA TK_DOT
 %token TK_IF
+%token TK_WHILE TK_DO
 
 %%
 program:
@@ -128,13 +129,42 @@ command:
                                 }
     | define_var
     | conditional
+    | loop_repet
 ;
 
+loop_repet:
+    TK_WHILE loop_condition block 
+                                   {
+                                        free($$);
+                                        $$ = malloc((8 + strlen($2) + strlen($3)) * sizeof(char));
+                                        strcpy($$, "while(");
+                                        strcat($$, $2);
+                                        strcat($$, ")");
+                                        strcat($$, $3);
+                                    }
+    | TK_DO block TK_WHILE loop_condition 
+                                    {
+                                        free($$);
+                                        $$ = malloc((11 + strlen($2) + strlen($4)) * sizeof(char));
+                                        strcpy($$, "do");
+                                        strcat($$, $2);
+                                        strcat($$, "while(");
+                                        strcat($$, $4);
+                                        strcat($$, ");");
+                                    }
+;
+
+loop_condition:
+    TK_OPEN_BRACKET value TK_CLOSE_BRACKET
+                                    { $$ = strdup($2); }
+    | value
+;   
 
 func_exec_param:
                                     { $$ = strdup(""); }
     | value                         { $$ = strdup($1); }
-    | value TK_COMMA func_exec_param     {
+    | value TK_COMMA func_exec_param     
+                                    {
                                         $1 = strdup($1);
                                         free($$);
                                         $$ = malloc((2 + strlen($1) + strlen($3)) * sizeof(char));
