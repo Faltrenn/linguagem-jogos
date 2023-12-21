@@ -74,13 +74,23 @@ extern char *content;
 
 "<"                 { return TK_LOP_SMALLER; }
 
+"+"                 { return TK_ADD; }
+
+"-"                 { return TK_SUB; }
+
+"/"                 { return TK_DIV; }
+
+"*"                 { return TK_MUL; }
+
 .                   { printf("unknown character %c\n", *yytext); }
 %% 
   
 int yywrap(void)
 {
-    FILE *f = fopen("code.c", "w");
-    fprintf(f, "%s", content);
+    if (content != NULL) {
+        FILE *f = fopen("code.c", "w");
+        fprintf(f, "%s", content);
+    }
 
     return 1;
 } 
