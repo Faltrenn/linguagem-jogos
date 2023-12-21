@@ -24,6 +24,18 @@ extern char *content;
 
 "while"             { return TK_WHILE; }
 
+"for"               { return TK_FOR; }
+
+"in"                { return TK_IN; }
+
+"..."               { return TK_FOR_INC_INC; }
+
+"..<"               { return TK_FOR_INC_EXC; }
+
+">.."               { return TK_FOR_EXC_INC; }
+
+">.<"               { return TK_FOR_EXC_EXC; }
+
 "not"               { return TK_LOP_NOT; }
 
 "true"              { return TK_VAL_TRUE; }
