@@ -415,18 +415,26 @@ value_bool:
                                     }
 ;
 
+op_aux:
+                                    { $$ = strdup(""); }
+    | TK_SUB                        { $$ = strdup("-"); }
+
 num:
-    | TK_VAL_INT                    {
+    | op_aux TK_VAL_INT             {
+                                        $1 = strdup($1);
                                         free($$);
-                                        $$ = malloc((12 + strlen(yytext)) * sizeof(char));
+                                        $$ = malloc((12 + strlen($1) + strlen(yytext)) * sizeof(char));
                                         strcpy($$, "int_create(");
+                                        strcat($$, $1);
                                         strcat($$, strdup(yytext));
                                         strcat($$, ")");
                                     }
-    | TK_VAL_FLOAT                  {
+    | op_aux TK_VAL_FLOAT           {
+                                        $1 = strdup($1);
                                         free($$);
-                                        $$ = malloc((14 + strlen(yytext)) * sizeof(char));
+                                        $$ = malloc((14 + strlen($1) + strlen(yytext)) * sizeof(char));
                                         strcpy($$, "float_create(");
+                                        strcat($$, $1);
                                         strcat($$, strdup(yytext));
                                         strcat($$, ")");
                                     }

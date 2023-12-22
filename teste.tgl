@@ -1,25 +1,27 @@
 func main() -> int {
-    var Circle c1 = Circle(3.0, Vector2(50.0, 15.0))
-    var Circle c2 = Circle(10.0, Vector2(13.0, 8.0))
-    var Circle c3 = Circle(2.0, Vector2(15.0, 8.0))
-    var Circle c4 = Circle(2.0, Vector2(0.0, 2.0))
+    var Circle a = Circle(3.0, Vector2(.0, 8.0))
+    var Circle b = Circle(10.0, Vector2(13.0, 8.0))
+    var Circle c = Circle(2.0, Vector2(15.0, 8.0))
+    var Circle d = Circle(2.0, Vector2(.0, 2.0))
+    var Circle e = Circle(0.0, Vector2(33.0, 8.0))
     
-    var Float i = 0.0
     var Int collision = 1
+    var Float increment = .5
     while collision.value {
         collision = 0
-        c1.radius = c1.radius + i
-        if c1 collide c2 {
-            printf("C1 E C2 colidem!\n")
-        } else if c1 collide c3 {
-            printf("C1 e C3 colidem!\n")
-        } else if c1 collide c4 {
-            printf("C1 e C4 colidem!\n")
+        e.radius = e.radius + increment
+        printf("Raio: %s\n", e.radius.to_str(e.radius))
+        if e collide a {
+            printf("C5 E C1 colidem!\n")
+        }else if e collide b {
+            printf("C5 E C2 colidem!\n")
+        } else if e collide c {
+            printf("C5 e C3 colidem!\n")
+        } else if e collide d {
+            printf("C5 e C4 colidem!\n")
         } else {
             printf("Sem colisoes\n")
             collision = 1
         }
-
-        i = i + 1.0
     }
 }
