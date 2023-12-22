@@ -38,17 +38,17 @@ extern char *content;
 
 ">.<"               { return TK_FOR_EXC_EXC; }
 
-"not"               { return TK_COP_NOT; }
-
 "true"              { return TK_VAL_TRUE; }
 
 "false"             { return TK_VAL_FALSE; }
 
-"collide"             { return TK_LOP_INTER; }
+"collide"           { return TK_LOP_INTER; }
 
 "and"               { return TK_LOP_AND; }
 
 "or"                { return TK_LOP_OR; }
+
+"not"               { return TK_LOP_NOT; }
 
 "."                 { return TK_DOT; }
 

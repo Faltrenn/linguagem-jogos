@@ -17,13 +17,13 @@ char *content = NULL;
 %token TK_FUNC TK_OPEN_BRACKET TK_CLOSE_BRACKET TK_OPEN_BRACE TK_CLOSE_BRACE TK_RETURN_TYPE
 %token TK_VAR TK_CONST
 %token TK_EQUALS
-%token TK_COP_BIGGER TK_COP_SMALLER TK_COP_NOT TK_VAL_TRUE TK_VAL_FALSE
+%token TK_COP_BIGGER TK_COP_SMALLER TK_VAL_TRUE TK_VAL_FALSE
 %token TK_ADD TK_SUB TK_MUL TK_DIV
 %token TK_VAL_FLOAT TK_VAL_INT TK_VAL_STRING
 %token TK_NAME
 %token TK_COMMA TK_DOT
 %token TK_IF TK_ELSE
-%token TK_LOP_INTER TK_LOP_AND TK_LOP_OR
+%token TK_LOP_INTER TK_LOP_AND TK_LOP_OR TK_LOP_NOT
 %token TK_WHILE TK_DO TK_FOR TK_IN TK_FOR_INC_INC TK_FOR_INC_EXC TK_FOR_EXC_INC TK_FOR_EXC_EXC
 
 %%
@@ -164,6 +164,14 @@ command:
     | define_var
     | conditional
     | loop_repet
+    | name assign               {
+                                    $1 = strdup($1);
+                                    free($$);
+                                    $$ = malloc((2 + strlen($1) + strlen($2)) * sizeof(char));
+                                    strcpy($$, $1);
+                                    strcat($$, $2);
+                                    strcat($$, ";");
+                                }
 ;
 
 loop_repet:
@@ -372,7 +380,7 @@ comparison_op:
     | TK_COP_BIGGER TK_EQUALS       { $$ = strdup("big_equ"); }
     | TK_COP_SMALLER TK_EQUALS      { $$ = strdup("smal_equ"); }
     | TK_LOP_INTER                  { $$ = strdup("collide"); }
-
+    | TK_LOP_NOT TK_LOP_INTER       { $$ = strdup("collide!"); }
 ;
 
 logic_op:
@@ -381,16 +389,24 @@ logic_op:
 ;
 
 value_bool:
-    TK_VAL_TRUE                     { $$ = strdup("1"); }
+    num_and_var
+    | TK_VAL_TRUE                   { $$ = strdup("1"); }
     | TK_VAL_FALSE                  { $$ = strdup("0"); }
     | num_and_var comparison_op num_and_var      
                                     {
                                         $1 = strdup($1);
                                         free($$);
-                                        $$ = malloc((5 + (2* strlen($1)) + strlen($2) + strlen($3)) * sizeof(char));
-                                        strcpy($$, $1);
+                                        $$ = malloc((6 + (2* strlen($1)) + strlen($2) + strlen($3)) * sizeof(char));
+                                        int n = strlen($2);
+                                        if($2[n - 1] == '!') {
+                                            n = strlen($2);
+                                            strcpy($$, "!");
+                                        } else {
+                                            n++;
+                                        }
+                                        strcat($$, $1);
                                         strcat($$, ".");
-                                        strcat($$, $2);
+                                        strncat($$, $2, n-1);
                                         strcat($$, "(");
                                         strcat($$, $1);
                                         strcat($$, ",");
@@ -431,6 +447,23 @@ num_and_var:
 
 operation_math:
     num
+    | name
+    | name math_op operation_math {
+                                    $1 = strdup($1);
+                                    free($$);
+                                    char *aux = strdup("float");
+
+                                    $$ = malloc((8 +strlen(aux) + strlen($1) + strlen($2) + strlen($3)) * sizeof(char));
+                                    if (strcmp($2, "+") == 0)
+                                        sprintf($$, "%s_add(%s, %s)", aux, $1, $3);
+                                    else if (strcmp($2, "-") == 0)
+                                        sprintf($$, "%s_sub(%s, %s)", aux, $1, $3);
+                                    else if (strcmp($2, "*") == 0)
+                                        sprintf($$, "%s_mul(%s, %s)", aux, $1, $3);
+                                    else if (strcmp($2, "/") == 0)
+                                        sprintf($$, "%s_div(%s, %s)", aux, $1, $3);
+
+    }
     | num math_op operation_math {
                             $1 = strdup($1);
                             free($$);
@@ -463,6 +496,14 @@ math_op:
 
 name:
     TK_NAME                         { $$ = strdup(yytext); }
+    | name TK_DOT name              {
+                                        $1 = strdup($1);
+                                        free($$);
+                                        $$ = malloc((2 + strlen($1) + strlen($3)) * sizeof(char));
+                                        strcpy($$, $1);
+                                        strcat($$, ".");
+                                        strcat($$, $3);
+                                    }
 ;
 %%
 
