@@ -23,7 +23,7 @@ char *content = NULL;
 %token TK_NAME
 %token TK_COMMA TK_DOT
 %token TK_IF
-%token TK_LOP_INTER
+%token TK_LOP_INTER TK_LOP_AND TK_LOP_OR
 %token TK_WHILE TK_DO TK_FOR TK_IN TK_FOR_INC_INC TK_FOR_INC_EXC TK_FOR_EXC_INC TK_FOR_EXC_EXC
 
 %%
@@ -59,6 +59,19 @@ conditional:
 condition:
     value                 { $$ = strdup($1); }
     | TK_OPEN_BRACKET value TK_CLOSE_BRACKET { $$ = $2; }
+    | value logic_op condition {
+                                $1 = strdup($1);
+                                free($$);
+                                $$ = malloc((5 + (2* strlen($1)) + strlen($2) + strlen($3)) * sizeof(char));
+                                strcpy($$, $1);
+                                strcat($$, ".");
+                                strcat($$, $2);
+                                strcat($$, "(");
+                                strcat($$, $1);
+                                strcat($$, ",");
+                                strcat($$, $3);
+                                strcat($$, ")");
+                            }
 ;
 
 
@@ -302,7 +315,7 @@ func_exec:
 ;
 
 
- define_var:
+define_var:
     TK_VAR name name assign     {
                                     free($$);
                                     $$ = malloc((6 + strlen($2) + strlen($3) + strlen($4)) * sizeof(char));
@@ -335,15 +348,20 @@ block:
                                             }
 ;
 
-
 comparison_op:
-    TK_COP_BIGGER                   { $$ = strdup(">"); }
-    | TK_COP_SMALLER                { $$ = strdup("<"); }
-    | TK_EQUALS TK_EQUALS           { $$ = strdup("=="); }
-    | TK_COP_BIGGER TK_EQUALS       { $$ = strdup(">="); }
-    | TK_COP_SMALLER TK_EQUALS      { $$ = strdup("<="); }
+    TK_COP_BIGGER                   { $$ = strdup("bigger"); }
+    | TK_COP_SMALLER                { $$ = strdup("smaller"); }
+    | TK_EQUALS TK_EQUALS           { $$ = strdup("equ_equ"); }
+    | TK_COP_BIGGER TK_EQUALS       { $$ = strdup("big_equ"); }
+    | TK_COP_SMALLER TK_EQUALS      { $$ = strdup("smal_equ"); }
+    |    TK_LOP_INTER                    { $$ = strdup("inter"); }
+
 ;
 
+logic_op:
+    | TK_LOP_AND                    { $$ = strdup("and"); }
+    | TK_LOP_OR                     { $$ = strdup("or"); }
+;
 
 value_bool:
     TK_VAL_TRUE                     { $$ = strdup("1"); }
@@ -352,10 +370,15 @@ value_bool:
                                     {
                                         $1 = strdup($1);
                                         free($$);
-                                        $$ = malloc((1+ strlen($1) + strlen($2) + strlen($3)) * sizeof(char));
+                                        $$ = malloc((5 + (2* strlen($1)) + strlen($2) + strlen($3)) * sizeof(char));
                                         strcpy($$, $1);
+                                        strcat($$, ".");
                                         strcat($$, $2);
+                                        strcat($$, "(");
+                                        strcat($$, $1);
+                                        strcat($$, ",");
                                         strcat($$, $3);
+                                        strcat($$, ")");
                                     }
 ;
 
