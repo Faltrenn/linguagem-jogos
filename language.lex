@@ -44,6 +44,10 @@ extern char *content;
 
 "inter"             { return TK_LOP_INTER; }
 
+"and"               { return TK_LOP_AND; }
+
+"or"                { return TK_LOP_OR; }
+
 "."                 { return TK_DOT; }
 
 "("                 { return TK_OPEN_BRACKET; }
