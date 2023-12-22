@@ -20,6 +20,8 @@ extern char *content;
 
 "if"                { return TK_IF; }
 
+"else"              { return TK_ELSE; }
+
 "do"                { return TK_DO; }
 
 "while"             { return TK_WHILE; }

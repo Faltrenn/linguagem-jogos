@@ -22,7 +22,7 @@ char *content = NULL;
 %token TK_VAL_FLOAT TK_VAL_INT TK_VAL_STRING
 %token TK_NAME
 %token TK_COMMA TK_DOT
-%token TK_IF
+%token TK_IF TK_ELSE
 %token TK_LOP_INTER TK_LOP_AND TK_LOP_OR
 %token TK_WHILE TK_DO TK_FOR TK_IN TK_FOR_INC_INC TK_FOR_INC_EXC TK_FOR_EXC_INC TK_FOR_EXC_EXC
 
@@ -46,13 +46,27 @@ program:
 
 
 conditional:
-    TK_IF condition block       {
+    TK_IF condition block else  {
                                     free($$);
-                                    $$ = malloc((5 + strlen($2) + strlen($3)) * sizeof(char));
+                                    $$ = malloc((5 + strlen($2) + strlen($3) + strlen($4)) * sizeof(char));
                                     strcpy($$, "if(");
                                     strcat($$, $2);
                                     strcat($$, ")");
                                     strcat($$, $3);
+                                    strcat($$, $4);
+                                }
+;
+
+else:
+                                {
+                                    free($$);
+                                    $$ = strdup("");
+                                }
+    | TK_ELSE block             {
+                                    free($$);
+                                    $$ = malloc((5 + strlen($2)) * sizeof(char));
+                                    strcpy($$, "else");
+                                    strcat($$, $2);
                                 }
 
 
