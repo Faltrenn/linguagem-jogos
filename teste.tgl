@@ -4,6 +4,10 @@ func main() -> int {
     var Circle c3 = Circle(2.0, Vector2(15.0, 8.0))
     var Circle c4 = Circle(2.0, Vector2(0.0, 2.0))
     if c1 collide c2 and c2 collide c3 and c3 collide c4 {
-        printf("Colisao!\n")
+        printf("Todos colidem!\n")
+    } else if c2 collide c1 {
+        printf("C1 e C2 colidem!\n")
+    } else {
+        printf("Sem colisoes\n")
     }
 }

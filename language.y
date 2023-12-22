@@ -68,6 +68,12 @@ else:
                                     strcpy($$, "else");
                                     strcat($$, $2);
                                 }
+    | TK_ELSE conditional       {
+                                    free($$);
+                                    $$ = malloc((6 + strlen($2)) * sizeof(char));
+                                    strcpy($$, "else ");
+                                    strcat($$, $2);
+                                }
 
 
 condition:
