@@ -75,12 +75,12 @@ Circle circle_create(Float radius, Vector2 position) {
     Circle c;
     c.radius = radius;
     c.position = position;
-    c.collides = & circle_collides;
+    c.collide = & circle_collide;
 
     return c;
 }
 
-unsigned int circle_collides(Circle a, Circle b) {
+unsigned int circle_collide(Circle a, Circle b) {
     float c1 = a.position.x.value - b.position.x.value;
     float c2 = a.position.y.value - b.position.y.value;
     float offset = sqrt(c1*c1 + c2*c2);

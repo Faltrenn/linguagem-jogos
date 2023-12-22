@@ -62,15 +62,12 @@ condition:
     | value logic_op condition {
                                 $1 = strdup($1);
                                 free($$);
-                                $$ = malloc((5 + (2* strlen($1)) + strlen($2) + strlen($3)) * sizeof(char));
+                                $$ = malloc((3 + (strlen($1)) + strlen($2) + strlen($3)) * sizeof(char));
                                 strcpy($$, $1);
-                                strcat($$, ".");
+                                strcat($$, " ");
                                 strcat($$, $2);
-                                strcat($$, "(");
-                                strcat($$, $1);
-                                strcat($$, ",");
+                                strcat($$, " ");
                                 strcat($$, $3);
-                                strcat($$, ")");
                             }
 ;
 
@@ -354,13 +351,13 @@ comparison_op:
     | TK_EQUALS TK_EQUALS           { $$ = strdup("equ_equ"); }
     | TK_COP_BIGGER TK_EQUALS       { $$ = strdup("big_equ"); }
     | TK_COP_SMALLER TK_EQUALS      { $$ = strdup("smal_equ"); }
-    |    TK_LOP_INTER                    { $$ = strdup("inter"); }
+    | TK_LOP_INTER                  { $$ = strdup("collide"); }
 
 ;
 
 logic_op:
-    | TK_LOP_AND                    { $$ = strdup("and"); }
-    | TK_LOP_OR                     { $$ = strdup("or"); }
+    | TK_LOP_AND                    { $$ = strdup("&&"); }
+    | TK_LOP_OR                     { $$ = strdup("||"); }
 ;
 
 value_bool:
@@ -385,13 +382,15 @@ value_bool:
 num:
     | TK_VAL_INT                    {
                                         free($$);
-                                        $$ = strdup("int_create(");
+                                        $$ = malloc((12 + strlen(yytext)) * sizeof(char));
+                                        strcpy($$, "int_create(");
                                         strcat($$, strdup(yytext));
                                         strcat($$, ")");
                                     }
     | TK_VAL_FLOAT                  {
                                         free($$);
-                                        $$ = strdup("float_create(");
+                                        $$ = malloc((14 + strlen(yytext)) * sizeof(char));
+                                        strcpy($$, "float_create(");
                                         strcat($$, strdup(yytext));
                                         strcat($$, ")");
                                     }

@@ -42,7 +42,7 @@ extern char *content;
 
 "false"             { return TK_VAL_FALSE; }
 
-"inter"             { return TK_LOP_INTER; }
+"collide"             { return TK_LOP_INTER; }
 
 "and"               { return TK_LOP_AND; }
 

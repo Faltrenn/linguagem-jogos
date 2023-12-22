@@ -1,6 +1,11 @@
-func main() -> int{
-    var Int a = 10
-    var Int b = a
-    var Float c = .4
-    printf("Int: %s\nFloat: %s\n", b.to_str(b), c.to_str(c))
+func main() -> int {
+    var Circle c1 = Circle(3.0, Vector2(0.0, 8.0))
+    var Circle c2 = Circle(10.0, Vector2(13.0, 8.0))
+    var Circle c3 = Circle(2.0, Vector2(15.0, 8.0))
+    var Circle c4 = Circle(2.0, Vector2(0.0, 2.0))
+    if c1 collide c2 and c2 collide c3 and c3 collide c4{
+        printf("Colisao!\n")
+    } else {
+        printf("Sem colisao!\n")
+    }
 }

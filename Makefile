@@ -13,4 +13,4 @@ clean:
 	rm -f compiler language.tab.c lex.yy.c language.tab.h language.output
 
 code:
-	gcc -c code.c basic.c && gcc -o main.out *.o -lm && rm *.o
+	./compiler teste.tgl && gcc -c code.c basic.c && gcc -o main *.o -lm && rm *.o

@@ -43,6 +43,7 @@ typedef struct Vector2 {
     char * (*to_str) (struct Vector2);
 } Vector2;
 
+Vector2 vector2_create(Float, Float);
 Vector2 vector2_add(Vector2, Vector2);
 Vector2 vector2_sub(Vector2, Vector2);
 char * vector2_to_str(Vector2);
@@ -51,8 +52,9 @@ typedef struct Circle {
     Float radius;
     Vector2 position;
 
-    unsigned int (*collides) (struct Circle, struct Circle);
+    unsigned int (*collide) (struct Circle, struct Circle);
 } Circle;
 
 Circle circle_create(Float, Vector2);
-unsigned int circle_collides(Circle, Circle);
+
+unsigned int circle_collide(Circle, Circle);
