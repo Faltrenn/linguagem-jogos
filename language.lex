@@ -4,101 +4,61 @@
 
 #include "language.tab.h"
 
-extern char *content;
+extern FILE *file;
 
 %} 
 
 %option nounput
 %option noinput
   
-%% 
-"func"              { return TK_FUNC; }
+%%
 
-"var"               { return TK_VAR; }
+"func"                              {   return TK_FUNC;             }
 
-"const"             { return TK_CONST; }
+"return"                            {   return TK_RTRN;             }
 
-"if"                { return TK_IF; }
+"var"                               {   return TK_VAR;              }
 
-"else"              { return TK_ELSE; }
+"->"                                {   return TK_FUNC_RTRN;        }
 
-"do"                { return TK_DO; }
+"="                                 {   return TK_EQUALS;           }
 
-"while"             { return TK_WHILE; }
+\+                                  {   return TK_MOP_PLUS;         }
 
-"for"               { return TK_FOR; }
+\-                                  {   return TK_MOP_MINUS;        }
 
-"in"                { return TK_IN; }
+[a-zA-Z][a-zA-Z0-9_\-]*             {   return TK_NAME;             }
 
-"..."               { return TK_FOR_INC_INC; }
+[0-9][0-9]*                         {   return TK_VAL_INT;          }
 
-"..<"               { return TK_FOR_INC_EXC; }
+[0-9]*\.[0-9]+                      {   return TK_VAL_FLOAT;        }
 
-">.."               { return TK_FOR_EXC_INC; }
+\(                                  {   return TK_OPN_BRACK;        }
 
-">.<"               { return TK_FOR_EXC_EXC; }
+\)                                  {   return TK_CLS_BRACK;        }
 
-"true"              { return TK_VAL_TRUE; }
+\{                                  {   return TK_OPN_BRACE;        }
 
-"false"             { return TK_VAL_FALSE; }
+\}                                  {   return TK_CLS_BRACE;        }
 
-"collide"           { return TK_LOP_INTER; }
+\"[ -~]*\"                          {   return TK_VAL_STRING;       }
 
-"and"               { return TK_LOP_AND; }
+\.                                  {   return TK_DOT;              }
 
-"or"                { return TK_LOP_OR; }
+\,                                  {   return TK_COMMA;            }
 
-"not"               { return TK_LOP_NOT; }
+\n                                  {                               }
 
-"."                 { return TK_DOT; }
+[ \t]                               {                               }
 
-"("                 { return TK_OPEN_BRACKET; }
+\/\/[ -~]*\n                        {                               }
 
-")"                 { return TK_CLOSE_BRACKET; }
+\/\*[ -~\n]*\*\/                    {                               }
 
-"{"                 { return TK_OPEN_BRACE; }
-
-"}"                 { return TK_CLOSE_BRACE; }
-
-[0-9]+              { return TK_VAL_INT; }
-
-[0-9]*\.[0-9]+      { return TK_VAL_FLOAT; }
-
-[a-zA-Z][a-zA-Z0-9_]*      { return TK_NAME; }
-
-\"[ -~]*\"          { return TK_VAL_STRING; }
- 
-\n                  {  }
-
-[ \t]               {  }
-
-"->"                { return TK_RETURN_TYPE; }
-
-","                 { return TK_COMMA; }
-
-"="                 { return TK_EQUALS; }
-
-">"                 { return TK_COP_BIGGER; }
-
-"<"                 { return TK_COP_SMALLER; }
-
-"+"                 { return TK_ADD; }
-
-"-"                 { return TK_SUB; }
-
-"/"                 { return TK_DIV; }
-
-"*"                 { return TK_MUL; }
-
-.                   { printf("unknown character %c\n", *yytext); }
+.                                   {   
+                                        printf("unknown character %c\n", *yytext);
+                                        return 0;
+                                    }
 %% 
   
-int yywrap(void)
-{
-    if (content != NULL) {
-        FILE *f = fopen("code.c", "w");
-        fprintf(f, "%s", content);
-    }
-
-    return 1;
-} 
+int yywrap(void) {  return 1;   }
