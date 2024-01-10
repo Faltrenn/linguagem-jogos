@@ -167,7 +167,7 @@ commands:
 
 command:
     func_exec                                           {   $$ = command($1);                       }
-    | TK_RTRN value                                     {   $$ = command(_return($2));              }
+    | TK_RTRN operation                                 {   $$ = command(_return($2));              }
 ;
 
 func_exec:
@@ -181,9 +181,13 @@ exec_params:
 
 list_values:
                                                         {   $$ = strdup("");                        }
-    | value                                             {   $$ = strdup($1);                        }
-    | list_values TK_COMMA value                        {   $$ = list_values($1, $3);               }
+    | operation                                         {   $$ = strdup($1);                        }
+    | list_values TK_COMMA operation                    {   $$ = list_values($1, $3);               }
 ;
+
+operation:
+    value                                               {   $$ = strdup($1);                        }
+    | math_operator operation                           {   $$ = math_operation($1, $2);            }
 
 value:
     number                                              {   $$ = strdup($1);                        }
@@ -191,7 +195,6 @@ value:
     | attribute                                         {   $$ = strdup($1);                        }
     | name /* Variável */                               {   $$ = strdup($1);                        }
     | func_exec                                         {   $$ = strdup($1);                        }
-    | math_operator value                               {   $$ = math_operation($1, $2);            }
 ;
 
 math_operator:
