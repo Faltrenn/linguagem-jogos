@@ -108,11 +108,10 @@ char * block(char *commands) {
     return block;
 }
 
-char * math_operation(char *value1, char *operator, char *value2) {
-    char *m_operation = malloc((2 + strlen(value1) + strlen(value2)) * sizeof(char));
-    strcpy(m_operation, value1);
-    strcat(m_operation, operator);
-    strcat(m_operation, value2);
+char * math_operation(char *operator, char *value) {
+    char *m_operation = malloc((2 + strlen(value)) * sizeof(char));
+    strcpy(m_operation, operator);
+    strcat(m_operation, value);
 
     return m_operation;
 }

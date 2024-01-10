@@ -1,11 +1,10 @@
-func soma(int a, int b) -> int {
-    return a + b
+func inverter(int v) -> int {
+    return -v
 }
 
 func teste() {}
 
 func main() -> int {
-    var int res = soma(4, 8)
-    printf("Soma: %d\n", res)
+    printf("Inversao: %d\n", inverter(10))
     return 0
 }
