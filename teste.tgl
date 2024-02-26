@@ -1,10 +1,11 @@
 func inverter(int v) -> int {
-    return -v
+    return v
 }
 
 func teste() {}
 
 func main() -> int {
+    var int a
     printf("Inversao: %d\n", inverter(10))
     return 0
 }

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "compiler.h"
 
 #define YYSTYPE char *
 
@@ -10,6 +11,14 @@ extern int yylex(void);
 extern int yyerror(char* s);
 
 FILE *file;
+
+char * var_create(char *type, char *name) {
+    char *var = malloc((2 + strlen(type) + strlen(name)) * sizeof(char));
+    strcpy(var, type);
+    strcat(var, " ");
+    strcat(var, name);
+    return var;
+}
 
 char * attribute(char *n1, char *n2) {
     char *attr = malloc((2 + strlen(n1) + strlen(n2)) * sizeof(char));
@@ -169,6 +178,7 @@ commands:
 command:
     func_exec                                           {   $$ = command($1);                       }
     | TK_RTRN operation                                 {   $$ = command(_return($2));              }
+    | TK_VAR name name                                  {   $$ = command(var_create($2, $3));       }
 ;
 
 func_exec:
