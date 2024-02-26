@@ -12,11 +12,27 @@ extern int yyerror(char* s);
 
 FILE *file;
 
-char * var_create(char *type, char *name) {
-    char *var = malloc((2 + strlen(type) + strlen(name)) * sizeof(char));
+
+char * var_assign(char *v, char *a) {
+    char *v_a = malloc((2 + strlen(v) + strlen(a)) * sizeof(char));
+    strcpy(v_a, v);
+    strcat(v_a, a);
+    return v_a;
+}
+
+char * assign(char *v) {
+    char *a = malloc((2 + strlen(v)) * sizeof(char));
+    strcpy(a, "=");
+    strcat(a, v);
+    return a;
+}
+
+char * var_create(char *type, char *name, char *assign) {
+    char *var = malloc((2 + strlen(type) + strlen(name) + strlen(assign)) * sizeof(char));
     strcpy(var, type);
     strcat(var, " ");
     strcat(var, name);
+    strcat(var, assign);
     return var;
 }
 
@@ -178,8 +194,19 @@ commands:
 command:
     func_exec                                           {   $$ = command($1);                       }
     | TK_RTRN operation                                 {   $$ = command(_return($2));              }
-    | TK_VAR name name                                  {   $$ = command(var_create($2, $3));       }
+    | var_create                                        {   $$ = command($1);                       }
+    | var_assign                                        {   $$ = command($1);                       }
 ;
+
+var_create:
+    TK_VAR name name assign                             {   $$ = var_create($2, $3, $4);            }
+
+var_assign:
+    name assign                                         {   $$ = var_assign($1, $2);                }
+
+assign:
+                                                        {   $$ = strdup("");                        }
+    |TK_EQUALS value                                    {   $$ = assign($2);                        }
 
 func_exec:
     name exec_params                                    {   $$ = func_exec($1, $2);                 }
