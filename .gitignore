@@ -7,7 +7,6 @@ compiler
 main
 code.c
 
-
 # Prerequisites
 *.d
 

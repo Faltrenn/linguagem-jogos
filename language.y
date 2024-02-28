@@ -10,6 +10,8 @@ extern char *yytext;
 extern int yylex(void);
 extern int yyerror(char* s);
 
+Symbol *variables = NULL;
+
 FILE *file;
 
 
@@ -159,11 +161,15 @@ char * _return(char * value) {
 %token TK_MOP_PLUS TK_MOP_MINUS
 %token TK_NAME
 %token TK_DOT TK_COMMA
+%token TK_EOL
+
 
 %%
 program:
-    func_create                                         {   fprintf(file, "%s", $1);                }
+    TK_EOL                                              {   $$ = strdup("");                        }
+    | func_create                                       {   fprintf(file, "%s", $1);                }
     | program func_create                               {   fprintf(file, "%s", $2);                }
+    | program TK_EOL                                    {   $$ = strdup("");                        }
 ;
 
 func_create:
@@ -193,6 +199,8 @@ commands:
 
 command:
     func_exec                                           {   $$ = command($1);                       }
+    | TK_EOL                                            {   $$ = strdup("");                        }
+    | TK_RTRN                                           {   $$ = command(_return(""));              }
     | TK_RTRN operation                                 {   $$ = command(_return($2));              }
     | var_create                                        {   $$ = command($1);                       }
     | var_assign                                        {   $$ = command($1);                       }
@@ -200,13 +208,16 @@ command:
 
 var_create:
     TK_VAR name name assign                             {   $$ = var_create($2, $3, $4);            }
+;
 
 var_assign:
     name assign                                         {   $$ = var_assign($1, $2);                }
+;
 
 assign:
                                                         {   $$ = strdup("");                        }
     |TK_EQUALS value                                    {   $$ = assign($2);                        }
+;
 
 func_exec:
     name exec_params                                    {   $$ = func_exec($1, $2);                 }

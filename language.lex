@@ -47,7 +47,7 @@ extern FILE *file;
 
 \,                                  {   return TK_COMMA;            }
 
-\n                                  {                               }
+\n                                  {   return TK_EOL;              }
 
 [ \t]                               {                               }
 

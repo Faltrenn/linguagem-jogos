@@ -3,13 +3,16 @@ func inverter(int v) -> int {
 }
 
 func teste() {
-    var int a = 10
+    var int a = 20
+    printf("Teste\n")
+    return
     printf("Inversao: %d\n", inverter(a))
 }
 
 func main() -> int {
+    teste()
     var int a = 10
     a = 20
-    printf("Inversao: %d\n", inverter(10))
+    printf("Inversao: %d\n", inverter(a))
     return 0
 }
